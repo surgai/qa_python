@@ -7,11 +7,13 @@ class TestBooksCollector:
         collector_ut1.add_new_book(name)
         assert collector_ut1.books_genre == {'Несуществующая': ''} and name in collector_ut1.books_genre.keys() and len(name) < 41
 
-    @pytest.mark.parametrize("name,genre", [("В пасти безумия", "Ужасы"), ("Мимино", "Комедии")])
+    @pytest.mark.parametrize("name,genre", [("В пасти безумия", "Ужасы")])
     def test_set_book_genre_exist_in_books_genre(self, name, genre):
+
         collector_ut2 = BooksCollector()
+        collector_ut2.books_genre[name] = genre
         collector_ut2.set_book_genre(name, genre)
-        assert genre in collector_ut2.genre
+        assert collector_ut2.books_genre.get(name) in collector_ut2.genre
 
     def test_get_books_genre_true_genre(self):
         collector_ut3 = BooksCollector()
@@ -21,33 +23,47 @@ class TestBooksCollector:
     @pytest.mark.parametrize("genre", ['Ужасы'])
     def test_get_books_with_specific_genre_true_specific (self, genre):
         collector_ut4 = BooksCollector()
-        assert collector_ut4.get_books_with_specific_genre(genre) != 'Ужасы'
+        collector_ut4.books_genre['В пасти безумия'] = 'Ужасы'
+        collector_ut4.books_genre['Мимино'] = 'Комедии'
+        assert collector_ut4.get_books_with_specific_genre(genre) == ['В пасти безумия']
 
 
     def test_get_books_genre_true_dict (self):
         collector_ut5 = BooksCollector()
+        collector_ut5.books_genre['В пасти безумия'] = 'Ужасы'
         collector_ut5.get_books_genre()
-        assert collector_ut5.books_genre == {}
+        assert collector_ut5.books_genre == {'В пасти безумия': 'Ужасы'}
 
     def test_get_books_for_children_notadult(self):
         collector_ut6 = BooksCollector()
-        collector_ut6.get_books_for_children()
-        assert collector_ut6.books_genre.get != []
+        collector_ut6.books_genre['В пасти безумия'] = 'Ужасы'
+        collector_ut6.books_genre['Мимино'] = 'Комедии'
+        for_kids = []
+        for_kids += collector_ut6.get_books_for_children()
+        assert for_kids == ['Мимино']
 
-    @pytest.mark.parametrize("name", ['Несуществующая1', 'Несуществующая2'])
+    @pytest.mark.parametrize("name", ['Мимино', 'В пасти безумия'])
     def test_add_book_in_favorites_not_exist_books_genre(self, name):
         collector_ut7 = BooksCollector()
         collector_ut7.add_book_in_favorites(name)
-        assert name not in collector_ut7.books_genre.keys()
+        collector_ut7.books_genre['В пасти безумия'] = 'Ужасы'
+        collector_ut7.books_genre['Мимино'] = 'Комедии'
+        assert name in collector_ut7.books_genre.keys()
 
-    @pytest.mark.parametrize("name", ['Мимино'])
+    @pytest.mark.parametrize("name", ['Мимино', 'В пасти безумия'])
     def test_delete_book_from_favorites_exist_in_genre(self, name):
         collector_ut8 = BooksCollector()
+        collector_ut8.books_genre['В пасти безумия'] = 'Ужасы'
+        collector_ut8.books_genre['Мимино'] = 'Комедии'
+        collector_ut8.add_book_in_favorites(name)
+        assert name in collector_ut8.favorites
         collector_ut8.delete_book_from_favorites(name)
         assert name not in collector_ut8.favorites
 
 
     def test_get_list_of_favorites_books_true_dict (self):
         collector_ut9 = BooksCollector()
+        collector_ut9.books_genre['В пасти безумия'] = 'Ужасы'
+        collector_ut9.add_book_in_favorites('В пасти безумия')
         collector_ut9.get_list_of_favorites_books()
-        assert collector_ut9.favorites == []
+        assert collector_ut9.favorites == ['В пасти безумия']

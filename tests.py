@@ -31,8 +31,8 @@ class TestBooksCollector:
     def test_get_books_genre_true_dict (self):
         collector_ut5 = BooksCollector()
         collector_ut5.books_genre['В пасти безумия'] = 'Ужасы'
-        collector_ut5.get_books_genre()
-        assert collector_ut5.books_genre == {'В пасти безумия': 'Ужасы'}
+        upd_books_genre = collector_ut5.get_books_genre()
+        assert upd_books_genre == {'В пасти безумия': 'Ужасы'}
 
     def test_get_books_for_children_notadult(self):
         collector_ut6 = BooksCollector()
